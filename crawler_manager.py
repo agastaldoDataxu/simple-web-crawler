@@ -22,6 +22,11 @@ import content_util
 from url_queue import URLQueue
 
 logger = logging.getLogger(__name__)
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(levelname)s - %(message)s")
+handler.setFormatter(formatter)
+logger.addHandler(handler)
 
 
 class CrawlManager():
@@ -158,4 +163,6 @@ class CrawlManager():
             hex_hashed_content = hashed_content.hexdigest()
             self.content_checksum.append(hex_hashed_content)
 
-        return json.dumps(response_object)
+        result_content = json.dumps(response_object)
+        print result_content
+        return result_content
