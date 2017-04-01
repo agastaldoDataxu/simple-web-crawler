@@ -2,6 +2,8 @@
 Created on 29 Mar 2017
 
 @author: alessiogastaldo
+
+Class with queue implementation. This queue is used by the crawler to insert new links
 '''
 
 

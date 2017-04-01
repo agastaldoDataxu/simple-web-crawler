@@ -2,6 +2,8 @@
 Created on 29 Mar 2017
 
 @author: alessiogastaldo
+
+Util module to extract links in a page and retrieve static assets
 '''
 
 from BeautifulSoup import BeautifulSoup
@@ -17,7 +19,6 @@ def extract_links(page_content, page_url):
     soup = BeautifulSoup(page_content)
     # making sure HTML is not broken
     soup.prettify()
-    # TODO: add some exception here to check page_content is OK
     for tag in soup.findAll("a", href=True):
         tag[HTML_TAG_REF] = urlparse.urljoin(page_url, tag[HTML_TAG_REF])
         new_links.append(tag[HTML_TAG_REF])
@@ -31,7 +32,6 @@ def get_static_assets(page_content, page_url):
     soup = BeautifulSoup(page_content)
     # making sure HTML is not broken
     soup.prettify()
-    # TODO: add some exception here to check page_content is OK
 
     for tag in soup.findAll('img'):
         if tag.get("src"):

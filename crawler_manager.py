@@ -2,6 +2,10 @@
 Created on 29 Mar 2017
 
 @author: alessiogastaldo
+
+CrawlManager class that expose the function crawl().
+It can be initialised through a seed_url and queue_max_size that 
+restrict the size of the queue to a certain limit
 '''
 import sys
 import getopt
@@ -29,12 +33,10 @@ class CrawlManager():
         self.user_agent = "darthvader_crawler"  # being a polite crawler
         self.seed_url = seed_url
         self.domain = urlparse(seed_url).hostname
-        self.filter = Filter(seed_url, user_agent)
+        self.filter = Filter(seed_url, self.user_agent)
         self.crawler_queue_max_size = crawler_queue_max_size
 
-    # header + content seen validation + robots + generic HHTP get issue
-    def url_validation(self, page_url):
-
+    def url_fetcher(self, page_url):
         response = None
         error_message = ""
 
@@ -56,6 +58,13 @@ class CrawlManager():
             error_message = "Generic exception happened: {}".format(e)
             logger.error(error_message)
 
+        return error_message, response
+
+    # header + content seen validation + robots + generic HHTP get issue
+    def url_validation(self, page_url):
+
+        error_message, response = self.url_fetcher(page_url)
+
         if len(error_message) > 0:
             return False, error_message
 
@@ -64,13 +73,14 @@ class CrawlManager():
             logger.info("Content type filter: OK")
         else:
             error_message = "Content type filter response KO, page can't be analyzed"
-            logger.info(error_message)
+            logger.error(error_message)
             return False, error_message
 
         if self.filter.can_page_be_fetched(page_url):
             logger.info("URL is respecting the robots.txt")
         else:
             error_message = "URL is not respecting robots.txt"
+            logger.error(error_message)
             return False, error_message
 
         page_content = response.read()
@@ -82,6 +92,7 @@ class CrawlManager():
             return True, page_content
         elif hex_hashed_content in self.content_checksum:
             error_message = "Page already crawled.."
+            logger.error(error_message)
             return False, error_message
 
         logger.info("All validation checks passed")
@@ -98,15 +109,14 @@ class CrawlManager():
         response_object = {}
 
         logger.info("Validating seed url")
-        result, reason = url_validation(self.seed_url)
+        result, page_content = self.url_validation(self.seed_url)
 
         if result:
             logger.info(
                 "We can proceed with crawling Seed URL: {}".format(self.seed_url))
-            page_content = reason
         else:
             logger.error("The Seed URL provided can't be used for crawling: {}".format(
-                reason))
+                page_content))
             sys.exit()
 
         self.url_queue.enqueue(self.seed_url)
@@ -116,13 +126,14 @@ class CrawlManager():
             validation_result = True
 
             if not first_iteration:
-                validation_result, page_content = url_validation(current_url)
+                validation_result, page_content = self.url_validation(
+                    current_url)
             else:
                 first_iteration = False
 
             if not validation_result:
                 logger.info(
-                    "Crawler can't process this {}, reason: {}".format(current_url, page_content))
+                    "Crawler can't process this URL {}, reason: {}".format(current_url, page_content))
                 continue
 
             # extracting links and adding them to queue
@@ -147,7 +158,4 @@ class CrawlManager():
             hex_hashed_content = hashed_content.hexdigest()
             self.content_checksum.append(hex_hashed_content)
 
-            print "Queue size: {}".format(selfurl_queue.size())
-
-        print json.dumps(response_object)
         return json.dumps(response_object)

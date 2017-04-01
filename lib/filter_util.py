@@ -2,6 +2,8 @@
 Created on 29 Mar 2017
 
 @author: alessiogastaldo
+
+Util onbject that contains url validation mehtods
 '''
 from reppy.robots import Robots
 
