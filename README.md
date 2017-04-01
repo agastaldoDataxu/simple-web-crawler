@@ -39,3 +39,8 @@ Response will be a JSON object of the type:
 The below diagram shows the crawler logic
 
 ![Alt text](https://github.com/agastaldoDataxu/simple-web-crawler/blob/master/Simple%20Crawler.jpg "Simple Web Crawler diagram")
+
+## how to test the crawler
+
+Simple test suite can be found in the test directory. It's not an extensive set of tests, but it covers basic functionalities for this crawler.
+
