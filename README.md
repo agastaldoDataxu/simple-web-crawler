@@ -21,8 +21,10 @@ You can then start crawling simply calling:
 Response will be a JSON object of the type:
 
 ```
-"http://my-seed-url.com": ["http://my-seed-url/logo.png", "http://my-seed-url/signup.js", http://my-seed-url/background.css],
-"http://my-seed-url.com/prices":["http://my-seed-url/prices/price.png", "http://my-seed-url/prices/calculate-price.js", http://my-seed-url/prices/price-color.css]
+{"http://my-seed-url.com": 
+  ["http://my-seed-url/logo.png", "http://my-seed-url/signup.js", http://my-seed-url/background.css],
+"http://my-seed-url.com/prices":
+  ["http://my-seed-url/prices/price.png", "http://my-seed-url/prices/calculate-price.js", http://my-seed-url/prices/price-color.css]}
 ```
 ## crawler logic
 
